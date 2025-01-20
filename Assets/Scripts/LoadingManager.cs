@@ -2,9 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
-using TMPro; 
-
-
+using TMPro;
 
 public class LoadingManager : MonoBehaviour
 {
@@ -13,6 +11,9 @@ public class LoadingManager : MonoBehaviour
 
     private const string settingsFileName = "Settings.json";
     private const string messageFileName = "Message.json";
+    private const string assetBundleName = "example.bundle";
+
+    public static AssetBundle loadedBundle; // Глобальная ссылка на Asset Bundle
 
     void Start()
     {
@@ -21,20 +22,18 @@ public class LoadingManager : MonoBehaviour
 
     private IEnumerator LoadContent()
     {
-        // Искусственная задержка для демонстрации загрузки
+        // Искусственная задержка
         yield return new WaitForSeconds(1f);
 
-        // Загружаем JSON-файлы
+        // Загрузка JSON-файлов
         string settingsPath = Path.Combine(Application.streamingAssetsPath, settingsFileName);
         string messagePath = Path.Combine(Application.streamingAssetsPath, messageFileName);
 
         if (File.Exists(settingsPath) && File.Exists(messagePath))
         {
-            // Читаем файлы
             string settingsJson = File.ReadAllText(settingsPath);
             string messageJson = File.ReadAllText(messagePath);
 
-            // Обрабатываем файлы
             Debug.Log($"Settings: {settingsJson}");
             Debug.Log($"Message: {messageJson}");
         }
@@ -43,14 +42,15 @@ public class LoadingManager : MonoBehaviour
             Debug.LogError("JSON files not found in StreamingAssets!");
         }
 
-        // Загружаем Asset Bundle
-        string assetBundlePath = Path.Combine(Application.streamingAssetsPath, "example.bundle");
+        // Загрузка Asset Bundle
+        string assetBundlePath = Path.Combine(Application.streamingAssetsPath, assetBundleName);
         if (File.Exists(assetBundlePath))
         {
-            AssetBundle bundle = AssetBundle.LoadFromFile(assetBundlePath);
-            if (bundle != null)
+            loadedBundle = AssetBundle.LoadFromFile(assetBundlePath);
+            if (loadedBundle != null)
             {
                 Debug.Log("Asset Bundle loaded successfully!");
+                DontDestroyOnLoad(gameObject);
             }
             else
             {
@@ -62,14 +62,13 @@ public class LoadingManager : MonoBehaviour
             Debug.LogError("Asset Bundle not found in StreamingAssets!");
         }
 
-        // Обновляем прогресс-бар и текст
+        // Обновляем прогресс-бар
         progressBar.value = 1f;
         progressText.text = "Loading... 100%";
 
-        // Искусственная задержка перед переходом на основной экран
+        // Искусственная задержка
         yield return new WaitForSeconds(1f);
 
-        // Переход на основную сцену
         UnityEngine.SceneManagement.SceneManager.LoadScene("MainScene");
     }
 }
