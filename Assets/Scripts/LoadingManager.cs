@@ -34,7 +34,7 @@ public class LoadingManager : MonoBehaviour
             string settingsJson = File.ReadAllText(settingsPath);
             string messageJson = File.ReadAllText(messagePath);
 
-            // Обрабатываем файлы (распарсим в будущем)
+            // Обрабатываем файлы
             Debug.Log($"Settings: {settingsJson}");
             Debug.Log($"Message: {messageJson}");
         }
